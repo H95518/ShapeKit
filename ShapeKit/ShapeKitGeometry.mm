@@ -36,10 +36,16 @@
     self.geosGeom = GEOSWKTReader_read_r(handle, WKTReader, [wkt UTF8String]);
     GEOSWKTReader_destroy_r(handle, WKTReader);
     
-    self.geomType = [NSString stringWithUTF8String:GEOSGeomType_r(handle, geosGeom)];
-    
+    char *typeString = GEOSGeomType_r(handle, self.geosGeom);
+    self.geomType = [NSString stringWithUTF8String: typeString];
+    free(typeString);
+        
     GEOSWKTWriter *WKTWriter = GEOSWKTWriter_create_r(handle);
-    self.wktGeom = [NSString stringWithUTF8String:GEOSWKTWriter_write_r(handle, WKTWriter,geosGeom)];
+
+    char *wktString = GEOSWKTWriter_write_r(handle, WKTWriter, self.geosGeom);
+    self.wktGeom = [NSString stringWithUTF8String:wktString];
+    free(wktString);
+    
     GEOSWKTWriter_destroy_r(handle, WKTWriter);
     
     return self;
@@ -48,10 +54,18 @@
 
 -(id)initWithGeosGeometry:(GEOSGeometry *)geom {
     [self init];
-    geosGeom = geom;
-    self.geomType = [NSString stringWithUTF8String:GEOSGeomType_r(handle, geosGeom)];
+    self.geosGeom = geom;
+
+    char *typeString = GEOSGeomType_r(handle, self.geosGeom);
+    self.geomType = [NSString stringWithUTF8String:typeString];
+    free(typeString);
+
     GEOSWKTWriter *WKTWriter = GEOSWKTWriter_create_r(handle);
-    self.wktGeom = [NSString stringWithUTF8String:GEOSWKTWriter_write_r(handle, WKTWriter,geosGeom)];
+    
+    char *wktString = GEOSWKTWriter_write_r(handle, WKTWriter, self.geosGeom);
+    self.wktGeom = [NSString stringWithUTF8String:wktString];
+    free(wktString);
+
     GEOSWKTWriter_destroy_r(handle, WKTWriter);
     
     return self;    
@@ -189,7 +203,10 @@ void log_and_exit(const char *fmt,...) {
     geometry.coordinate = coordinate;
     
     GEOSWKTWriter *WKTWriter = GEOSWKTWriter_create_r(handle);
-    self.wktGeom = [NSString stringWithUTF8String:GEOSWKTWriter_write_r(handle, WKTWriter,geosGeom)];
+    char *wktString = GEOSWKTWriter_write_r(handle, WKTWriter, self.geosGeom);
+    self.wktGeom = [NSString stringWithUTF8String: wktString];
+    free(wktString);
+
     GEOSWKTWriter_destroy_r(handle, WKTWriter);
     
     return self;
@@ -266,7 +283,10 @@ void log_and_exit(const char *fmt,...) {
     geometry = [MKPolyline polylineWithCoordinates:coordinates count:count];
     
     GEOSWKTWriter *WKTWriter = GEOSWKTWriter_create_r(handle);
-    self.wktGeom = [NSString stringWithUTF8String:GEOSWKTWriter_write_r(handle, WKTWriter,geosGeom)];
+    char *wktString = GEOSWKTWriter_write_r(handle, WKTWriter, self.geosGeom);
+    self.wktGeom = [NSString stringWithUTF8String: wktString];
+    free(wktString);
+
     GEOSWKTWriter_destroy_r(handle, WKTWriter);
     
     return self;
@@ -343,7 +363,11 @@ void log_and_exit(const char *fmt,...) {
     geometry = [MKPolygon polygonWithCoordinates:coordinates count:count];
     
     GEOSWKTWriter *WKTWriter = GEOSWKTWriter_create_r(handle);
-    self.wktGeom = [NSString stringWithUTF8String:GEOSWKTWriter_write_r(handle, WKTWriter,geosGeom)];
+
+    char *wktString = GEOSWKTWriter_write_r(handle, WKTWriter, self.geosGeom);
+    self.wktGeom = [NSString stringWithUTF8String: wktString];
+    free(wktString);
+
     GEOSWKTWriter_destroy_r(handle, WKTWriter);
     
     return self;
